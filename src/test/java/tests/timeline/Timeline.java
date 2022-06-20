@@ -1,7 +1,6 @@
 package tests.timeline;
 
 import config.ClientPropInterface;
-import config.LinkPropInterface;
 import config.TechPropInterface;
 import org.aeonbits.owner.ConfigFactory;
 import org.junit.jupiter.api.Disabled;
