@@ -4,7 +4,6 @@ import config.AdminPropInterface;
 import config.ManagerPropInterface;
 import config.TeamPropInterface;
 import config.TechPropInterface;
-import io.restassured.http.ContentType;
 import modelPojo.forPreRequest.CreateOrUpdateNoteDto;
 import org.aeonbits.owner.ConfigFactory;
 import org.junit.jupiter.api.DisplayName;
@@ -13,11 +12,10 @@ import org.junit.jupiter.api.Test;
 import preRequest.PreRequestCreateNote;
 import preRequest.PreRequestToken;
 import tests.TestBase;
-
-import static helpers.CustomApiListener.withCustomTemplates;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
+import static tests.spec.Specs.request;
 import static tests.spec.Specs.response200;
 
 @Tag("note")
@@ -36,12 +34,11 @@ public class PostRestNote extends TestBase {
         CreateOrUpdateNoteDto body = new CreateOrUpdateNoteDto(epoch, teamConf.teamId(),
                 PreRequestCreateNote.getIdNewNoteTeamFromAdmin(), changeTestText, 0);
         given()
-                .filter(withCustomTemplates())
+                .spec(request)
                 .header("Authorization", PreRequestToken.getTokenAdmin())
                 .body(body)
-                .contentType(ContentType.JSON)
-                .when().log().body()
-                .post("/rest/notes")
+                .when()
+                .post("/notes")
                 .then().log().all()
                 .spec(response200)
                 .body("status", is("SUCCESS"))
@@ -58,13 +55,12 @@ public class PostRestNote extends TestBase {
         CreateOrUpdateNoteDto body = new CreateOrUpdateNoteDto(epoch, teamConf.teamId(),
                 idNote, changeTestText, 0);
         given()
-                .filter(withCustomTemplates())
+                .spec(request)
                 .header("Authorization", PreRequestToken.getTokenAdmin())
                 .body(body)
-                .contentType(ContentType.JSON)
-                .when().log().body()
-                .post("/rest/notes")
-                .then().log().all()
+                .when()
+                .post("/notes")
+                .then()
                 .spec(response200)
                 .body("status", is("SUCCESS"))
                 .body("data.owner.id", is(techConfig.idTechUser()))
@@ -79,13 +75,12 @@ public class PostRestNote extends TestBase {
         CreateOrUpdateNoteDto body = new CreateOrUpdateNoteDto(epoch, teamConf.teamId(),
                 PreRequestCreateNote.getIdNewNoteTeamFromManager(), changeTestText, 0);
         given()
-                .filter(withCustomTemplates())
+                .spec(request)
                 .header("Authorization", PreRequestToken.getTokenAdmin())
                 .body(body)
-                .contentType(ContentType.JSON)
-                .when().log().body()
-                .post("/rest/notes")
-                .then().log().all()
+                .when()
+                .post("/notes")
+                .then()
                 .spec(response200)
                 .body("status", is("SUCCESS"))
                 .body("data.team.id", is(teamConf.teamId()))
@@ -100,13 +95,12 @@ public class PostRestNote extends TestBase {
         CreateOrUpdateNoteDto body = new CreateOrUpdateNoteDto(epoch, teamConf.teamId(),
                 PreRequestCreateNote.getIdNewNoteTeamFromAdmin(), changeTestText, 0);
         given()
-                .filter(withCustomTemplates())
+                .spec(request)
                 .header("Authorization", PreRequestToken.getTokenManager())
                 .body(body)
-                .contentType(ContentType.JSON)
-                .when().log().body()
-                .post("/rest/notes")
-                .then().log().all()
+                .when()
+                .post("/notes")
+                .then()
                 .spec(response200)
                 .body("status", is("ERROR"))
                 .body("message", is("You are not allowed to edit this note"));
@@ -118,13 +112,12 @@ public class PostRestNote extends TestBase {
         CreateOrUpdateNoteDto body = new CreateOrUpdateNoteDto(epoch, teamConf.teamId(),
                 PreRequestCreateNote.getIdNewNoteTeamFromAdmin(), changeTestText, 0);
         given()
-                .filter(withCustomTemplates())
+                .spec(request)
                 .header("Authorization", PreRequestToken.getTokenTech())
                 .body(body)
-                .contentType(ContentType.JSON)
-                .when().log().body()
-                .post("/rest/notes")
-                .then().log().all()
+                .when()
+                .post("/notes")
+                .then()
                 .spec(response200)
                 .body("status", is("ERROR"))
                 .body("message", is("You are not allowed to edit this note"));
@@ -136,13 +129,12 @@ public class PostRestNote extends TestBase {
         CreateOrUpdateNoteDto body = new CreateOrUpdateNoteDto(epoch, teamConf.teamId(),
                 PreRequestCreateNote.getIdNewNoteTeamFromManager(), changeTestText, 0);
         given()
-                .filter(withCustomTemplates())
+                .spec(request)
                 .header("Authorization", PreRequestToken.getTokenTech())
                 .body(body)
-                .contentType(ContentType.JSON)
-                .when().log().body()
-                .post("/rest/notes")
-                .then().log().all()
+                .when()
+                .post("/notes")
+                .then()
                 .spec(response200)
                 .body("status", is("ERROR"))
                 .body("message", is("You are not allowed to edit this note"));
@@ -154,13 +146,12 @@ public class PostRestNote extends TestBase {
         Integer idNote = PreRequestCreateNote.getIdNewNoteTechToSelf();
         CreateOrUpdateNoteDto body = new CreateOrUpdateNoteDto(epoch, 0, idNote, changeTestText, 0);
         given()
-                .filter(withCustomTemplates())
+                .spec(request)
                 .header("Authorization", PreRequestToken.getTokenTech())
                 .body(body)
-                .contentType(ContentType.JSON)
-                .when().log().body()
-                .post("/rest/notes")
-                .then().log().all()
+                .when()
+                .post("/notes")
+                .then()
                 .spec(response200)
                 .body("status", is("SUCCESS"))
                 .body("data", notNullValue())

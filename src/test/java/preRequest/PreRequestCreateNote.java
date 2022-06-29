@@ -1,15 +1,14 @@
 package preRequest;
 
 import com.github.javafaker.Faker;
-import config.LinkPropInterface;
 import config.TeamPropInterface;
 import config.TechPropInterface;
-import io.restassured.http.ContentType;
 import modelPojo.forPreRequest.CreateOrUpdateNoteDto;
 import org.aeonbits.owner.ConfigFactory;
 import tests.TestBase;
 
 import static io.restassured.RestAssured.given;
+import static tests.spec.Specs.request;
 
 public  class PreRequestCreateNote extends TestBase {
 
@@ -20,15 +19,14 @@ public  class PreRequestCreateNote extends TestBase {
         String testTxt = faker.backToTheFuture().quote();
 
         CreateOrUpdateNoteDto body = new CreateOrUpdateNoteDto(epoch, teamConf.teamId(), 0, testTxt, 0);
-       Integer a = given()
+        return  given()
+               .spec(request)
                 .header("Authorization", PreRequestToken.getTokenAdmin())
                 .body(body)
-                .contentType(ContentType.JSON)
                 .when()
-                .put( "/rest/notes")
+                .put( "/notes")
                 .then().log().all()
                 .extract().jsonPath().get("data.id");
-        return a;
     }
     static public Integer getIdNewNoteTeamFromManager() {
         TeamPropInterface teamConf = ConfigFactory.create(TeamPropInterface.class);
@@ -37,15 +35,14 @@ public  class PreRequestCreateNote extends TestBase {
         String testTxt = faker.backToTheFuture().quote();
 
         CreateOrUpdateNoteDto body = new CreateOrUpdateNoteDto(epoch, teamConf.teamId(), 0, testTxt, 0);
-        Integer a = given()
+        return given()
+                .spec(request)
                 .header("Authorization", PreRequestToken.getTokenManager())
                 .body(body)
-                .contentType(ContentType.JSON)
                 .when()
-                .put("/rest/notes")
+                .put("/notes")
                 .then().log().all()
                 .extract().jsonPath().get("data.id");
-        return a;
     }
 
     static public Integer getIdNewNoteTechToSelf() {
@@ -55,15 +52,14 @@ public  class PreRequestCreateNote extends TestBase {
         String testTxt = faker.backToTheFuture().quote();
 
         CreateOrUpdateNoteDto body = new CreateOrUpdateNoteDto(epoch, 0, 0, testTxt, techConfig.idTechUser());
-       Integer a = given()
+        return given()
+               .spec(request)
                 .header("Authorization", PreRequestToken.getTokenTech())
                 .body(body)
-                .contentType(ContentType.JSON)
                 .when()
-                .put("/rest/notes")
+                .put("/notes")
                 .then().log().all()
                 .extract().jsonPath().get("data.id");
-        return a;
     }
 
 }

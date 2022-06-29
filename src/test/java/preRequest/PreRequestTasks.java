@@ -1,7 +1,6 @@
 package preRequest;
 
 import modelPojo.RestTasks;
-import org.junit.jupiter.api.Test;
 import tests.TestBase;
 
 import static io.restassured.RestAssured.given;
@@ -40,8 +39,4 @@ public class PreRequestTasks extends TestBase {
                 .spec(response200);
     }
 
-    @Test
-    void tst(){
-        deleteTask(2594);
-    }
 }

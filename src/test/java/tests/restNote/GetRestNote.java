@@ -17,6 +17,7 @@ import java.util.stream.Stream;
 import static helpers.CustomApiListener.withCustomTemplates;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.*;
+import static tests.spec.Specs.request;
 import static tests.spec.Specs.response200;
 
 @Tag("note")
@@ -30,12 +31,12 @@ public class GetRestNote extends TestBase {
     @DisplayName("Негативная проверка: Техник запрашивает заметки команды")
     void techRequestTeamNotes() {
         given()
-                .filter(withCustomTemplates())
+                .spec(request)
                 .header("Authorization", PreRequestToken.getTokenTech())
                 .queryParam("date", epoch)
                 .queryParam("teamId", teamConf.teamId())
-                .get("/rest/notes")
-                .then().log().all()
+                .get("/notes")
+                .then()
                 .spec(response200)
                 .body("status", is("ERROR"))
                 .body("message", is("Access denied"));
@@ -45,12 +46,12 @@ public class GetRestNote extends TestBase {
     @DisplayName("Негативная проверка: Техник запрашивает заметки другого техника")
     void techRequestAnotherTechNotes() {
         given()
-                .filter(withCustomTemplates())
+                .spec(request)
                 .header("Authorization", PreRequestToken.getTokenTech())
                 .queryParam("date", epoch)
                 .queryParam("userId", 67)
-                .get("/rest/notes")
-                .then().log().all()
+                .get("/notes")
+                .then()
                 .spec(response200)
                 .body("status", is("ERROR"))
                 .body("message", is("Access denied"));
@@ -60,11 +61,11 @@ public class GetRestNote extends TestBase {
     @DisplayName("Техник запрашивает свои заметки за текущий месяц")
     void techRequestYourSelfNotes() {
         given()
-                .filter(withCustomTemplates())
+                .spec(request)
                 .header("Authorization", PreRequestToken.getTokenTech())
                 .queryParam("date", epoch)
-                .get("/rest/notes")
-                .then().log().all()
+                .get("/notes")
+                .then()
                 .spec(response200)
                 .body("status", is("SUCCESS"))
                 .body("data", notNullValue())
@@ -83,12 +84,12 @@ public class GetRestNote extends TestBase {
     @MethodSource(value = "preRequestParamTokenAdminManager")
     void managerAdminRequestTeamNotes(String value, String forNameTest) {
         given()
-                .filter(withCustomTemplates())
+                .spec(request)
                 .header("Authorization", value)
                 .queryParam("date", epoch)
                 .queryParam("teamId", teamConf.teamId())
-                .get("/rest/notes")
-                .then().log().all()
+                .get("/notes")
+                .then()
                 .spec(response200)
                 .body("status", is("SUCCESS"))
                 .body("data", notNullValue())
@@ -101,13 +102,13 @@ public class GetRestNote extends TestBase {
     @MethodSource(value = "preRequestParamTokenAdminManager")
     void managerAdminRequestTechNotes(String value, String forNameTest) {
         given()
-                .filter(withCustomTemplates())
+                .spec(request)
                 .header("Authorization", value)
                 .queryParam("date", epoch)
                 .queryParam("userId", techConfig.idTechUser())
-                .when().log().all()
-                .get("/rest/notes")
-                .then().log().all()
+                .when()
+                .get("/notes")
+                .then()
                 .spec(response200)
                 .body("status", is("SUCCESS"))
                 .body("data", notNullValue())

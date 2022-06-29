@@ -12,6 +12,7 @@ import static helpers.CustomApiListener.withCustomTemplates;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
+import static tests.spec.Specs.request;
 import static tests.spec.Specs.response200;
 
 @Tag("note")
@@ -22,22 +23,22 @@ public class DeleteRestNote extends TestBase {
     @DisplayName("Админ удаляет заметку Админа")
     void AdminDeleteNoteFromAdmin() {
         given()
-                .filter(withCustomTemplates())
+                .spec(request)
                 .header("Authorization", PreRequestToken.getTokenAdmin())
                 .when().log().all()
-                .delete("/rest/notes/" + PreRequestCreateNote.getIdNewNoteTeamFromAdmin())
-                .then().log().all();
+                .delete("/notes/" + PreRequestCreateNote.getIdNewNoteTeamFromAdmin())
+                .then();
     }
 
     @Test
     @DisplayName("Негативная проверка: Менеджер удаляет заметку Админа")
     void MangerDeleteNoteFromAdmin() {
         given()
-                .filter(withCustomTemplates())
+                .spec(request)
                 .header("Authorization", PreRequestToken.getTokenManager())
                 .when()
-                .delete("/rest/notes/" + PreRequestCreateNote.getIdNewNoteTeamFromAdmin())
-                .then().log().all()
+                .delete("/notes/" + PreRequestCreateNote.getIdNewNoteTeamFromAdmin())
+                .then()
                 .spec(response200)
                 .body("message", is("You are not allowed to delete this note"))
                 .body("status", is("ERROR"))
@@ -50,11 +51,12 @@ public class DeleteRestNote extends TestBase {
     @DisplayName("Менеджер удаляет заметку Менеджера")
     void MangerDeleteNoteFromManager() {
         given()
-                .filter(withCustomTemplates())
+                .spec(request)
                 .header("Authorization", PreRequestToken.getTokenManager())
                 .when()
-                .delete("/rest/notes/" + PreRequestCreateNote.getIdNewNoteTeamFromManager())
-                .then().log().all();
+                .delete("/notes/" + PreRequestCreateNote.getIdNewNoteTeamFromManager())
+                .then()
+                .spec(response200);
     }
 
     @Disabled("Уточнение требований - сейчас Техник не может удалить заметку, которую создал сам Техник")
@@ -66,6 +68,7 @@ public class DeleteRestNote extends TestBase {
                 .header("Authorization", PreRequestToken.getTokenTech())
                 .when()
                 .delete("/rest/notes/" + PreRequestCreateNote.getIdNewNoteTechToSelf())
-                .then().log().all();
+                .then()
+                .spec(response200);
     }
 }
